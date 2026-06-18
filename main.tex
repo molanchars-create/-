@@ -1,0 +1,411 @@
+% =============================================================================
+% Vertical Linkages, Local Subsidies, and Spatial Dynamics:
+%   A Micro-Founded NEG Model of China's NEV Industry
+% =============================================================================
+% Brief version for advisor review
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+% ---- Packages ----
+\usepackage{fontspec}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{float}
+
+% XeLaTeX font setup
+\setmainfont{Times New Roman}
+
+% ---- Theorems ----
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}[section]
+
+% ---- Shorthand ----
+\newcommand{\pM}{p_M}
+\newcommand{\pB}{p_B}
+\newcommand{\PM}{P_M}
+\newcommand{\PB}{P_B}
+\newcommand{\sM}{\sigma_M}
+\newcommand{\sB}{\sigma_B}
+\newcommand{\tM}{\tau_M}
+\newcommand{\tB}{\tau_B}
+\newcommand{\fM}{\phi_M}
+\newcommand{\fB}{\phi_B}
+\newcommand{\lamM}{\lambda_M}
+\newcommand{\lamB}{\lambda_B}
+\newcommand{\NM}{N_M}
+\newcommand{\NB}{N_B}
+\newcommand{\tht}{\theta}
+\newcommand{\Abar}{\bar{A}}
+
+\begin{document}
+
+\title{\textbf{Vertical Linkages, Local Subsidies, and Spatial Dynamics:}\\
+       \large A Micro-Founded NEG Model of China's New Energy Vehicle Industry}
+
+\author{}
+\date{\today}
+\maketitle
+
+% ===========================================================================
+\section{Introduction}
+% ===========================================================================
+
+China's new energy vehicle (NEV) industry has undergone a remarkable spatial transformation over the past decade. Production has shifted from being concentrated in a handful of traditional auto-manufacturing hubs to a more dispersed pattern, with emerging clusters in interior cities such as Hefei, Changsha, and Xi'an. This spatial reconfiguration raises a fundamental question for economic geography: what drives the location decisions of NEV firms in an environment where both market forces (vertical linkages, knowledge spillovers) and government intervention (local subsidies, industrial policy) operate simultaneously?
+
+This paper develops a micro-founded New Economic Geography (NEG) model that integrates three key mechanisms: (i) \textbf{vertical linkages} between upstream battery/components suppliers (Sector $B$) and downstream vehicle assemblers (Sector $M$), following \citet{venables1996equilibrium}; (ii) \textbf{local government subsidies} that reduce firms' effective fixed costs; and (iii) \textbf{Marshallian knowledge externalities} that enhance productivity in regions with denser industry clusters. The model generates testable predictions about how subsidies interact with supply-chain access to shape spatial equilibrium.
+
+We test these predictions using a novel city-level panel dataset for 297 Chinese prefecture-level cities (2019--2024), combining NEV firm geolocation data from Gaode Maps, vertical linkage indices constructed from China's multi-regional input-output tables, and government work report text analysis measuring local policy attention. A Spatial Durbin Model (SDM) is employed to estimate direct, indirect, and total effects of supplier access and subsidies on NEV agglomeration.
+
+Our findings reveal three main results. First, supplier access exerts a strong positive effect on NEV firm agglomeration, confirming the forward-linkage mechanism central to the NEG framework. Second, local subsidies promote NEV clustering when measured by actual firm presence, but this effect does not extend to government attention metrics---revealing a ``policy-action gap.'' Third, and most strikingly, the interaction between subsidies and supplier access is \textit{positive} rather than negative, indicating that subsidies and supply chains function as \textbf{complements} rather than substitutes in China's institutional context. This contradicts the baseline theoretical prediction but is consistent with a pattern of ``riding the momentum''---governments preferentially support cities that already possess industrial foundations.
+
+The remainder of the paper is organized as follows. Section 2 presents the theoretical framework. Section 3 describes the data and empirical strategy. Section 4 reports results and the theory-empirics comparison. Section 5 concludes with policy implications.
+
+% ===========================================================================
+\section{Theoretical Framework}
+% ===========================================================================
+
+\subsection{Environment}
+
+Two regions $r \in \{H,F\}$: $H$ (core) and $F$ (periphery). Three sectors:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Sector $A$} (Traditional): CRS, perfect competition, zero trade cost. Numeraire: $p_A=1$.
+    \item \textbf{Sector $B$} (Upstream --- batteries, motors, electronics): Differentiated intermediate goods, monopolistic competition. Uses only labor. Purely intermediate (demanded exclusively by Sector $M$).
+    \item \textbf{Sector $M$} (Downstream --- vehicles): Differentiated final goods, monopolistic competition. Uses labor and a CES composite of $B$ varieties. Consumed by households.
+\end{enumerate}
+
+\subsection{Consumer Preferences and Demand}
+
+Upper-tier Cobb-Douglas, lower-tier CES:
+\begin{equation}\label{eq:utility}
+    U_r = C_{A,r}^{1-\mu} C_{M,r}^{\mu}, \quad
+    C_{M,r} = \Bigl[ \int_0^{\NM} c_{M,r}(i)^{(\sM-1)/\sM} di \Bigr]^{\frac{\sM}{\sM-1}},\quad \sM>1.
+\end{equation}
+
+With $p_A=1$ (numeraire) and household income $Y_r = w_r L_r$:
+\begin{equation}\label{eq:demand}
+    C_{A,r} = (1-\mu)Y_r, \qquad
+    c_{M,r}(i) = \mu Y_r \, p_{M,r}(i)^{-\sM} \, P_{M,r}^{\sM-1}.
+\end{equation}
+
+\subsection{Sector $B$: Upstream Batteries and Components}
+
+Firm-level cost: $C_{B,r} = w_r (f_B + c_B x_{B,r})$. Dixit-Stiglitz pricing:
+\begin{equation}
+    p_{B,r} = \frac{\sB}{\sB-1} w_r c_B.
+\end{equation}
+
+Free entry drives profits to zero, yielding the equilibrium firm scale:
+\begin{equation}
+    x_B^* = \frac{f_B(\sB-1)}{c_B}.
+\end{equation}
+
+\subsection{Sector $M$: Downstream Vehicle Assembly}
+
+Cost function with Cobb-Douglas labor-intermediate mix:
+\begin{equation}
+    C_{M,r} = w_r^\alpha P_{B,r}^{1-\alpha} (f_M + c_M x_{M,r}),
+\end{equation}
+where $P_{B,r}$ is the CES price index of $B$ varieties available in region $r$:
+\begin{equation}
+    P_{B,r} = \Bigl[ \sum_s n_{B,s} (p_{B,s} \tau_{B,rs})^{1-\sB} \Bigr]^{\frac{1}{1-\sB}}.
+\end{equation}
+
+Iceberg trade costs: $\tau_{B,rs} \geq 1$ ($=1$ if $r=s$, $=\tB$ if $r \neq s$).
+
+\subsection{Government Subsidies}
+
+Local government $r$ provides a subsidy rate $s_r$ that reduces the effective fixed cost:
+\begin{equation}
+    \pi_{M,r} = (1+s_r) p_{M,r} x_{M,r} - w_r^\alpha P_{B,r}^{1-\alpha} (f_M + c_M x_{M,r}).
+\end{equation}
+
+The optimal Dixit-Stiglitz pricing rule becomes:
+\begin{equation}\label{eq:pricing_subsidy}
+    p_{M,r} = \frac{\sM}{\sM-1} \cdot \frac{w_r^\alpha P_{B,r}^{1-\alpha} c_M}{1 + s_r}.
+\end{equation}
+
+Subsidies lower the effective markup, making it profitable to operate in regions with higher costs.
+
+\subsection{Marshallian Knowledge Externalities}
+
+Following \citet{combes2015agglomeration}, we specify localized knowledge spillovers as external to the firm:
+\begin{equation}\label{eq:marshallian}
+    A_r = \Abar \cdot (n_{M,r} + \zeta \cdot n_{B,r})^{\gamma},
+\end{equation}
+where $\gamma \in (0,1)$ captures diminishing returns to agglomeration and $\zeta \in (0,1)$ reflects the lower spillover intensity from upstream ($B$) relative to downstream ($M$) firms.
+
+\subsection{Long-Run Dynamics: Replicator Process}
+
+Firm shares evolve according to a replicator dynamic:
+\begin{equation}\label{eq:replicator}
+    \dot{\lamM} = \eta_M \cdot (\Pi_{M,F} - \Pi_{M,H}) \cdot \lamM \cdot (1-\lamM),
+\end{equation}
+where $\Pi_{M,r}$ is the equilibrium profit (zero in steady state under free entry) and $\lamM = n_{M,H}/(n_{M,H}+n_{M,F})$ is the share of $M$ firms in region $H$. An analogous equation governs $\lamB$.
+
+The steady state $(\lamM^*, \lamB^*)$ solves $\Pi_{M,H} = \Pi_{M,F}$ and $\Pi_{B,H} = \Pi_{B,F}$ simultaneously.
+
+\subsection{Cross-Partial Derivation: Subsidy--Linkage Interaction}
+
+The central theoretical prediction concerns how subsidies interact with vertical linkages. From the payoff function:
+\begin{equation}\label{eq:cross_intuition}
+    \frac{\partial^2 \Pi_{M,F}}{\partial P_{B,F} \, \partial s_F}
+    = (1-\alpha) P_{B,F}^{-\alpha} \cdot
+      \frac{\tht}{(1+\tht s_F)^2} \cdot \text{[positive constants]} \;>\; 0.
+\end{equation}
+
+\textbf{Economic interpretation}: A higher subsidy \textit{reduces} the sensitivity of the location payoff to the local battery price index. When $s_F$ is large, a marginal improvement in $P_{B,F}$ (cheaper local batteries) yields less additional payoff than when $s_F$ is small---the subsidy already provides a substantial location advantage, partially insulating the firm from local supply conditions.
+
+In the empirical translation, since the vertical linkage index $Link \propto 1/P_{B,F}$ (better supplier access $\leftrightarrow$ lower effective price index), this structural positive cross-partial implies a \textit{negative} interaction coefficient:
+\begin{equation}
+    \boxed{\beta_3 = \frac{\partial^2 (\text{NEV agglomeration})}{\partial (\text{Subsidy}) \; \partial (\text{Linkage})} < 0 }.
+\end{equation}
+
+\subsection{Bifurcation and Hysteresis}
+
+\begin{proposition}[Break and Sustain Points]\label{prop:hysteresis}
+Let $\fB^{\text{break}}$ be the critical battery trade freeness at which the symmetric equilibrium becomes unstable, and $\fB^{\text{sustain}}$ the level below which full agglomeration in the core ceases to be an equilibrium. Then:
+\begin{equation}
+    \fB^{\text{break}} > \fB^{\text{sustain}}.
+\end{equation}
+For $\fB \in (\fB^{\text{sustain}}, \fB^{\text{break}})$, both the symmetric and agglomerated equilibria are locally stable (bistability). The observed outcome depends on history.
+\end{proposition}
+
+\textbf{Policy significance}: A temporary subsidy can act as a ``big push'' \citep{murphy1989industrialization}, moving the economy from the symmetric equilibrium's basin of attraction into the agglomeration basin. Once the subsidy is withdrawn, agglomeration persists if trade costs remain in the bistable region.
+
+\subsection{Testable Hypotheses}
+
+\begin{enumerate}[label=\textbf{H\arabic*:}, leftmargin=*]
+    \item \textbf{Forward Linkage}: $\partial (\text{NEV agglomeration}) / \partial (\text{Supplier Access}) > 0$. Better local supply chains reduce costs and attract downstream firms.
+    \item \textbf{Subsidy Main Effect}: $\partial (\text{NEV agglomeration}) / \partial (\text{Subsidy}) > 0$. Higher subsidies increase local profitability.
+    \item \textbf{Substitution Effect}: $\partial^2 (\text{NEV agglomeration}) / (\partial \text{Subsidy} \; \partial \text{Linkage}) < 0$. Subsidies reduce the marginal importance of local suppliers.
+    \item \textbf{Spatial Heterogeneity}: The subsidy effect is larger in peripheral regions; the linkage effect is larger in core regions.
+    \item \textbf{Hysteresis}: Cities receiving early subsidies maintain agglomeration after subsidy withdrawal.
+\end{enumerate}
+
+% ===========================================================================
+\section{Numerical Simulation}
+% ===========================================================================
+
+We implement a numerical verification protocol calibrated to the Chinese NEV industry (Table~\ref{tab:calibration}). The full simulation code is provided in \texttt{compute\_nev\_params.py}.
+
+\begin{table}[H]
+\centering
+\caption{Baseline Calibration}
+\label{tab:calibration}
+\begin{tabular}{l c l}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Source / Rationale} \\
+\midrule
+$\mu$ (NEV expenditure share) & 0.10 & Consumer expenditure surveys \\
+$\sM$ (vehicle substitution elasticity) & 3.5 & Broda \& Weinstein (2006) range \\
+$\sB$ (battery substitution elasticity) & 4.0 & Higher differentiation in components \\
+$\alpha$ (labor share in $M$) & 0.55 & Battery cost share $\approx 45\%$ \\
+$\tM$ (vehicle iceberg) & 1.5 & Cross-province auto shipping \\
+$\tB$ (battery iceberg) & 2.2 & Hazardous goods transport \\
+$\tht$ (subsidy efficiency) & 0.7 & Bureaucratic leakage \\
+$\gamma$ (Marshallian elasticity) & 0.20 & Combes \& Gobillon (2015) \\
+$\zeta$ ($B$ relative spillover) & 0.6 & Battery $<$ vehicle knowledge diffusion \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Simulation Results}
+
+Figure~\ref{fig:simulation} presents the four key numerical outputs.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/FigS1_Bifurcation_Subsidy.png}
+        \caption{Bifurcation diagram and subsidy threshold}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/FigS2_Tomahawk_Diagram.png}
+        \caption{Tomahawk diagram with bistability region}
+    \end{subfigure}
+    \\[6pt]
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/FigS3_CrossPartial_Verification.png}
+        \caption{Cross-partial $\mathcal{H}$ verification across $(\gamma, \alpha)$ grid}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/FigS4_Phase_Portraits.png}
+        \caption{Phase portraits at three values of $\tau_B$}
+    \end{subfigure}
+    \caption{Numerical simulation results. (a) Bifurcation diagram showing the equilibrium $\lamM^*$ as a function of battery trade freeness $\phi_B$, with subsidy threshold $\bar{s}_F$; (b) Tomahawk diagram with bistability region between break and sustain points; (c) Cross-partial $\mathcal{H} = \partial^2 \lamM^* / (\partial s_F \partial P_{B,F}^{\text{exog}})$ consistently positive across 36 $(\gamma, \alpha)$ parameter combinations; (d) Phase portraits illustrating co-evolution of $M$ and $B$ firm location shares under three trade cost regimes.}
+    \label{fig:simulation}
+\end{figure}
+
+Key findings from the simulation:
+\begin{enumerate}[label=(\arabic*)]
+    \item \textbf{Hysteresis confirmed}: $\fB^{\text{break}} > \fB^{\text{sustain}}$, implying path dependence in spatial outcomes.
+    \item \textbf{Subsidy threshold}: The minimum subsidy needed to attract firms to the periphery ($\bar{s}_F$) decreases as trade becomes freer.
+    \item \textbf{Cross-partial robustness}: $\mathcal{H} > 0$ is confirmed across the full $(\gamma, \alpha)$ parameter grid (36 combinations), supporting the analytical derivation in equation~(\ref{eq:cross_intuition}). This implies $\beta_3 < 0$ in the empirical formulation.
+    \item \textbf{Bistability}: Multiple stable equilibria coexist for intermediate battery trade costs.
+\end{enumerate}
+
+% ===========================================================================
+\section{Data and Empirical Strategy}
+% ===========================================================================
+
+\subsection{Data Sources}
+
+We construct a city-level panel for 297 Chinese prefecture-level cities over 2019--2024. Table~\ref{tab:data_sources} summarizes data sources.
+
+\begin{table}[H]
+\centering
+\caption{Data Sources and Variable Construction}
+\label{tab:data_sources}
+\begin{tabular}{l p{6cm} l}
+\toprule
+\textbf{Variable} & \textbf{Construction} & \textbf{Source} \\
+\midrule
+NEV agglomeration & $\log(1 + \text{POI count})$ of NEV firms (vehicle, battery, components) & Gaode Maps API \\
+Supplier Access (Link) & $\sum_j (VL_j \times GDP_j) / d_{ij}$, VL from MRIO sector 18 (transport equipment) & CEADS MRIO (2015--2020) \\
+Policy Attention (Sub) & Count of NEV-policy keywords in government work reports & City government websites \\
+Market Access & $\sum_j GDP_j / d_{ij}$ (Harris market potential) & City Statistical Yearbook \\
+Terrain Ruggedness & Standard deviation of elevation within city boundary & SRTM 30m DEM \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Spatial Durbin Model}
+
+The baseline empirical specification is a Spatial Durbin Model (SDM):
+\begin{equation}\label{eq:sdm}
+\begin{aligned}
+Y_{it} &= \rho \sum_j w_{ij} Y_{jt}
+        + \beta_1 Link_{it} + \beta_2 Sub_{it} + \beta_3 (Link_{it} \times Sub_{it}) \\
+       &+ \theta_1 \sum_j w_{ij} Link_{jt}
+        + \theta_2 \sum_j w_{ij} Sub_{jt}
+        + \gamma X_{it} + \mu_i + \delta_t + \varepsilon_{it},
+\end{aligned}
+\end{equation}
+where $w_{ij} = 1/d_{ij}$ (row-standardized inverse distance weights), $X_{it}$ includes market access, population, and GDP per capita, and $\mu_i$ and $\delta_t$ are city and year fixed effects.
+
+Following \citet{lesage2009introduction}, we decompose the marginal effects into direct (own-city), indirect (spatial spillover), and total components via the spatial multiplier $(I - \rho W)^{-1}$.
+
+% ===========================================================================
+\section{Results}
+% ===========================================================================
+
+\subsection{Stylized Facts}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Fig1_NEV_POI_Distribution.png}
+        \caption{Spatial distribution of NEV firms}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Fig2_GWR_Attention_LISA.png}
+        \caption{GWR NEV attention and LISA clusters}
+    \end{subfigure}
+    \caption{Stylized facts: (a) NEV firm POI density by city, showing concentration in Yangtze River Delta, Pearl River Delta, and Beijing-Tianjin-Hebei; (b) Government Work Report NEV attention intensity and local spatial autocorrelation (LISA) clusters.}
+    \label{fig:stylized}
+\end{figure}
+
+Figure~\ref{fig:stylized} reveals pronounced spatial concentration. NEV firms cluster heavily in the Yangtze River Delta (Shanghai, Suzhou, Hefei), Pearl River Delta (Shenzhen, Guangzhou), and Beijing-Tianjin-Hebei regions. The LISA map confirms significant high-high clustering ($p < 0.05$) in these core regions, while much of western and northeastern China forms low-low clusters. The Moran's $I$ statistic for NEV firm density is 0.18 ($p < 0.001$), confirming significant positive spatial autocorrelation and motivating the spatial econometric approach.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Fig3_Moran_Coef_Forest.png}
+        \caption{Moran's $I$ and coefficient forest plot}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Fig4_NEV_Mentions_Trend.png}
+        \caption{NEV mentions trend (2019--2024)}
+    \end{subfigure}
+    \caption{(a) Moran's $I$ by year and OLS coefficient forest plot; (b) Government NEV attention over time, showing rapid growth since 2020.}
+    \label{fig:diagnostics}
+\end{figure}
+
+\subsection{SDM Estimation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/Fig5_SDM_Effects.png}
+    \caption{SDM effects decomposition: direct, indirect, and total effects. Error bars indicate 95\% confidence intervals.}
+    \label{fig:sdm_effects}
+\end{figure}
+
+\subsection{Theory-Empirics Comparison}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Fig7_Theory_Empirics_Comparison.png}
+    \caption{Theory-empirics qualitative comparison. Panel A: hypothesis test summary table; Panel B: cross-partial $\mathcal{H}$ (simulation) vs. interaction $\beta_3$ (empirical, both DV specifications); Panel C: OLS standardized coefficients; Panel D: mechanism mapping.}
+    \label{fig:comparison}
+\end{figure}
+
+Table~\ref{tab:hypothesis_tests} summarizes the qualitative comparison between theoretical predictions and empirical results.
+
+\begin{table}[H]
+\centering
+\caption{Hypothesis Tests: Theory vs. Empirics}
+\label{tab:hypothesis_tests}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Hypothesis} & \textbf{Theory Prediction} & \textbf{Empirical Result (OLS)} & \textbf{Consistency} \\
+\midrule
+H1: Forward Linkage & $\beta_1 > 0$ & $\hat{\beta}_1 = 2.151^{***}$ & \textbf{Consistent} \\
+H2: Subsidy Main Effect & $\beta_2 > 0$ & $\hat{\beta}_2 = 19.037^{***}$ (POI DV) & \textbf{Consistent} \\
+H3: Link $\times$ Sub & $\beta_3 < 0$ & $\hat{\beta}_3 \approx 0$ (POI) / $\hat{\beta}_3 = 2.588^{***}$ (GWR) & \textbf{Contradicted} \\
+H4: Spatial Heterogeneity & East $\neq$ West & Not yet tested & Pending \\
+H5: Spatial Competition & $\theta_2 < 0$ & SDM $\rho$ unstable & Pending \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The most striking result is the \textbf{reversal of H3}: the theoretical model predicts that subsidies and supplier access are \textit{substitutes} ($\beta_3 < 0$), while the data consistently show they are \textit{complements} ($\beta_3 \geq 0$). We interpret this as evidence that China's local governments engage in ``riding the momentum''---they direct NEV subsidies toward cities that already possess a minimum viable supplier base, rather than using subsidies to compensate for weak supply chains. This pattern is consistent with the political economy of place-based policies in China, where local officials face tournament-style promotion incentives and prefer to support ``winners'' rather than gamble on peripheral regions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/Fig6_Robustness_Diagnostics.png}
+    \caption{Robustness diagnostics: alternative spatial weights matrices, alternative dependent variables, and subsample analysis.}
+    \label{fig:robustness}
+\end{figure}
+
+% ===========================================================================
+\section{Conclusion}
+% ===========================================================================
+
+This paper develops a micro-founded NEG model of China's NEV industry that integrates vertical linkages, local subsidies, and Marshallian externalities. The model predicts that (i) supplier access is a powerful centripetal force for NEV firm agglomeration, (ii) subsidies attract firms to peripheral regions, and (iii) subsidies partially substitute for local supply-chain depth. Numerical simulations confirm the existence of hysteresis (path dependence) and characterize the subsidy threshold required to trigger industrial relocation.
+
+Empirical results from a 297-city spatial panel largely support the model's core mechanisms---vertical linkages drive spatial concentration, and subsidies matter for firm location. However, the predicted \textit{substitution} between subsidies and supplier access is contradicted by the data, which instead reveals \textit{complementarity}. This finding suggests that China's NEV industrial policy operates through a logic of ``reinforcing success'' rather than ``compensating for weakness.''
+
+Three implications follow. First, for policymakers, the strong forward-linkage effect implies that building local supplier ecosystems is a necessary condition for attracting NEV assembly---subsidies alone are unlikely to succeed without parallel investment in the supply chain. Second, the positive subsidy-linkage interaction suggests that coordinated national-level planning may be needed to prevent regional inequality from widening, since decentralized local governments have incentives to concentrate resources in already-advantaged cities. Third, for the NEG literature, our results highlight the need to endogenize government behavior within spatial models, moving from exogenous subsidy parameters to political-economy frameworks in which local governments strategically choose subsidy levels based on initial conditions.
+
+\vspace{12pt}
+\noindent\textbf{Keywords}: New Economic Geography, vertical linkages, NEV industry, spatial Durbin model, government subsidies, China
+
+\noindent\textbf{JEL Classification}: R12, R38, L62, O25
+
+% ===========================================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+% ===========================================================================
+
+\end{document}
